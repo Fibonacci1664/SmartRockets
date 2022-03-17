@@ -40,7 +40,6 @@ private:
     int geneCounter = 0;
     float maxSpeed = 10.0f;
     float speed = 2.0f;
-    float mass = 1.0f;
     sf::Vector2f rocketPosition;
     sf::Vector2f moonPosition;
     sf::Vector2f velocity;

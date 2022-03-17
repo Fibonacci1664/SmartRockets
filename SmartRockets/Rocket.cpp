@@ -131,7 +131,7 @@ void Rocket::addForce(sf::Vector2f newForce, float dt)
     // Scale
     //accel *= speed;
     // Add the accel to the velocity
-    velocity += accel;
+    velocity += accel * dt;
     // Ensure that the velocity is limited to max magnitude of 10
     velocity = limiter(maxSpeed);
     // Update rockets position using velocity

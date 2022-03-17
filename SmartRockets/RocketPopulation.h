@@ -3,7 +3,7 @@
 #include "Rocket.h"
 #include <SFML/Graphics/CircleShape.hpp>
 
-const int POPULATION_SIZE = 100;
+const int POPULATION_SIZE = 50;
 
 class RocketPopulation
 {
@@ -15,6 +15,8 @@ public:
     void render();
     void beginDraw();
     void endDraw();
+    double mapRange(double a1, double a2, double b1, double b2, double s);
+    double getTotalFitness();
     float determineBestRocket();
     void clearMatingPool();
     void fitness();
@@ -26,7 +28,7 @@ private:
     void populateMatingPool();
 
     sf::RenderWindow* window;
-    std::array<Rocket*, POPULATION_SIZE> rockets;
-    std::vector<Rocket*> matingPool;
+    std::vector<Rocket*> rockets;
+    std::vector<Rocket> matingPool;
 };
 

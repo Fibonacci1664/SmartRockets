@@ -21,6 +21,6 @@ private:
 	int DNAlength = 10;
 	int mutationRate = 1;
 	std::array<sf::Vector2f, DNA_LENGTH> genes;
-	float maxForce = 0.1f;
+	float maxForce = 0.01f;
 };
 

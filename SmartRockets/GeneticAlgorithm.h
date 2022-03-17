@@ -12,7 +12,7 @@ public:
 private:
     sf::RenderWindow* window;
     RocketPopulation* population;
-    int lifetime = 100;
+    int lifetime = 360;      // 1 Generation every 2 sec, assuming 60 FPS
     int lifeCounter = 0;
 };
 
