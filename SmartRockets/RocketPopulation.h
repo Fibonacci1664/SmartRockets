@@ -13,6 +13,10 @@ public:
 
     void update(float dt);
     void render();
+    void beginDraw();
+    void endDraw();
+    float determineBestRocket();
+    void clearMatingPool();
     void fitness();
     void selection();
     void reproduction();
@@ -22,10 +26,7 @@ private:
     void populateMatingPool();
 
     sf::RenderWindow* window;
-    sf::CircleShape target;
     std::array<Rocket*, POPULATION_SIZE> rockets;
     std::vector<Rocket*> matingPool;
-    //private int generations;
-
 };
 

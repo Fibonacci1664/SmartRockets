@@ -14,6 +14,5 @@ private:
     RocketPopulation* population;
     int lifetime = 100;
     int lifeCounter = 0;
-
 };
 

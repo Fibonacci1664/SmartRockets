@@ -4,7 +4,7 @@
 
 DNA::DNA()
 {
-
+    createDNAstrand();
 }
 
 DNA::~DNA()

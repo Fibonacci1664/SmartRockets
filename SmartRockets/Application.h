@@ -26,8 +26,6 @@ public:
 	Application(int width, int height);
 	~Application();
 
-	void update(float dt);
-	void render();
 	void run();
 
 private:

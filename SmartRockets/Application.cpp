@@ -35,7 +35,7 @@ Application::~Application()
 void Application::initWindow()
 {
     window.create(sf::VideoMode(windowWidth, windowHeight), "SMART ROCKETS!");
-    // NEVER have both vSync AND framerate limit, it's either or, NEVER both!
+    // NEVER have both vSync AND framerate limit, it's either, or, NEVER both!
     // If you find vSync is having no effect, check graphics driver's settings and change vSync from "off" to "controlled by application"
     //window.setVerticalSyncEnabled(true);    // Ensure the application runs at the same frequency as the monitor's refresh rate
     window.setFramerateLimit(60);           // Request a fixed framerate, diffrent OS may output slightly different FPS
@@ -75,6 +75,10 @@ void Application::run()
             // run genetic algo here!
             hasFoundTarget = GA->run(deltaTime);
         }
+
+        std::cout << "Target Found!\n";
+
+        break;
     }
 }
 
