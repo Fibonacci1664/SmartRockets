@@ -6,14 +6,22 @@ constexpr auto PI = 3.14159265359;
 
 Rocket::Rocket(sf::RenderWindow* hwnd) : window(hwnd)
 {
+    distanceToTarget = 0.0f;
+    fitnessScore = 0.0f;
+    magnitude = 0.0f;
+    geneCounter = 0;
+    maxSpeed = 10.0f;
+    speed = 2.0f;
+
     rocketPosition = sf::Vector2f(640.0f, 670.0f);
-    moonPosition = sf::Vector2f(640.0f, 50.0f);
+    moonPosition = sf::Vector2f(640.0f, 100.0f);
     velocity = sf::Vector2f(0.0f, 0.0f);
     accel = sf::Vector2f(0.0f, 0.0f);
 
     loadTextures();
     initRocket();
     initTarget();
+    initDebug();   
 }
 
 Rocket::~Rocket()
@@ -32,12 +40,20 @@ void Rocket::update(float dt)
     {
         geneCounter = 0;
     }
+
+    // Update the rockets invisible collision box
+    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * 0.05f, rocketSize.y * 0.05f);
+
+    // Update the rectangle visualisation of the rockets collision box
+    rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
 }
 
 void Rocket::render()
 {
-    window->draw(rocketSprite);
+    window->draw(rocketColBoxVisualized);
+    window->draw(moonColliderVisualized);
     window->draw(moonSprite);
+    window->draw(rocketSprite);
 }
 
 void Rocket::assessFitness()
@@ -145,10 +161,34 @@ void Rocket::initTarget()
     moonTexture.setSmooth(true);
     moonSprite.setTexture(moonTexture);
     moonSize = moonTexture.getSize();
-    moonSprite.setOrigin(moonSize.x * 0.5f, moonSize.y);
+    moonSprite.setOrigin(moonSize.x * 0.5f, moonSize.y * 0.5f);
     moonSprite.setPosition(moonPosition);
-    moonSprite.setRotation(-90.0f);
     moonSprite.setScale(0.2f, 0.2f);
+}
+
+void Rocket::initDebug()
+{
+    initRocketDebug();
+    initMoonDebug(); 
+}
+
+void Rocket::initRocketDebug()
+{
+    rocketColBoxVisualized.setFillColor(sf::Color(0, 0, 0, 0));
+    rocketColBoxVisualized.setOutlineColor(sf::Color::Magenta);
+    rocketColBoxVisualized.setOutlineThickness(1.0f);
+    rocketColBoxVisualized.setRotation(rocketSprite.getRotation());
+    rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
+    rocketColBoxVisualized.setSize(sf::Vector2f(rocketCollisionBox.width, rocketCollisionBox.height));
+}
+
+void Rocket::initMoonDebug()
+{
+    moonColliderVisualized.setFillColor(sf::Color(0, 0, 0, 0));
+    moonColliderVisualized.setOutlineColor(sf::Color::Magenta);
+    moonColliderVisualized.setOutlineThickness(1.0f);
+    moonColliderVisualized.setPosition(sf::Vector2f(moonSprite.getPosition().x - (moonSize.x * 0.5f * moonSprite.getScale().x), moonSprite.getPosition().y - (moonSize.y * 0.5f * moonSprite.getScale().y)));
+    moonColliderVisualized.setRadius(25.6f);
 }
 
 void Rocket::initRocket()
@@ -156,10 +196,13 @@ void Rocket::initRocket()
     rocketTexture.setSmooth(true);
     rocketSprite.setTexture(rocketTexture);
     rocketSize = rocketTexture.getSize();
-    rocketSprite.setOrigin(rocketSize.x * 0.5f, 0.0f);
+    rocketSprite.setOrigin(0.0f, 0.0f);
     rocketSprite.setPosition(rocketPosition);
     rocketSprite.setRotation(-90.0f);
     rocketSprite.setScale(0.05f, 0.05f);
+
+    // Set an invisible collision box around the rocket sprite
+    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * 0.05f, rocketSize.y * 0.05f);
 }
 
 void Rocket::loadTextures()

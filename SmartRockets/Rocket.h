@@ -14,18 +14,22 @@ public:
     sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float dt);
     void assessFitness();
 
+    // Getters / Setters
     float getMagnitude();
-    float getFitnessScore();
-    DNA getDNASequence();
+    float getFitnessScore();   
     void setDNASequence(DNA newDNA);
+    DNA getDNASequence();
 
 private:
-    sf::Vector2f limiter(float topSpeed);
-    float calculateMagnitude(sf::Vector2f vec);
+    sf::Vector2f limiter(float topSpeed);  
     sf::Vector2f calculateUnitVector(sf::Vector2f vec);
+    float calculateMagnitude(sf::Vector2f vec);
     void addForce(sf::Vector2f newForce, float dt);
     void initTarget();
     void initRocket();
+    void initDebug();
+    void initRocketDebug();
+    void initMoonDebug();
     void loadTextures();
 
     sf::RenderWindow* window;
@@ -33,13 +37,22 @@ private:
     sf::Sprite rocketSprite;
     sf::Texture moonTexture;
     sf::Sprite moonSprite;
-    float distanceToTarget = 0.0f;
+
+    // Debug box for rocketmoonColliderVisualized
+    sf::RectangleShape rocketColBoxVisualized;
+    sf::FloatRect rocketCollisionBox;
+    
+    // Debug circle for moon
+    sf::CircleShape moonColliderVisualized;
+
+    float distanceToTarget;
+    float fitnessScore;
+    float magnitude;
+    int geneCounter;
+    float maxSpeed;
+    float speed;
     DNA dna;
-    float fitnessScore = 0.0f;
-    float magnitude = 0.0f;
-    int geneCounter = 0;
-    float maxSpeed = 10.0f;
-    float speed = 2.0f;
+
     sf::Vector2f rocketPosition;
     sf::Vector2f moonPosition;
     sf::Vector2f velocity;
@@ -47,4 +60,3 @@ private:
     sf::Vector2u rocketSize;
     sf::Vector2u moonSize;
 };
-
