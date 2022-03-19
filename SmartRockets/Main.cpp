@@ -10,7 +10,7 @@ int main()
 	std::srand(std::time(nullptr)); // use current time as seed for random generator
 
 	Application app(WINDOW_WIDTH, WINDOW_HEIGHT);
-	app.run();
+	app.update();
 
 	/*sf::CircleShape target(20);
 	target.setFillColor(sf::Color::Red);*/

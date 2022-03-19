@@ -11,43 +11,42 @@ GeneticAlgorithm::~GeneticAlgorithm()
 
 }
 
-bool GeneticAlgorithm::run(float dt)
+void GeneticAlgorithm::update(float dt)
 {
-    if (lifeCounter < lifetime)
+    population->update(dt);
+}
+
+void GeneticAlgorithm::render()
+{
+    population->render();
+}
+
+bool GeneticAlgorithm::selectionAndReproduction()
+{
+    population->selection();
+
+    // Determine closest rocket
+    Rocket* closestRocket = population->determineBestRocket();
+
+    // Change the colour of the collider of that rocket
+    closestRocket->setRocketColliderColour();
+
+    // Redraw everything with the newly update closest rocket colour changed
+    population->render();
+
+    // Carry out intersection checks between the closest rocket and the target moon
+    bool targetFound = closestRocket->checkItersection();
+
+    if (targetFound)
     {
-        population->update(dt);
-        population->render();
-        ++lifeCounter; 
+        return true;
     }
-    else
-    {
-        lifeCounter = 0;
 
-        population->selection();
+    population->reproduction();
 
-        // Determine closest rocket
-        Rocket* closestRocket = population->determineBestRocket();
-
-        // Change the colour of the collider of that rocket
-        closestRocket->setRocketColliderColour();
-
-        // Redraw everything with the newly update closest rocket colour changed
-        population->render();
-
-        // Carry out intersection checks between the closest rocket and the target moon
-        bool targetFound = closestRocket->checkItersection();
-
-        if (targetFound)
-        {
-            return true;
-        }
-
-        population->reproduction();
-
-        // Clean up the closest rocket from the previous generation
-        /*delete closestRocket;
-        closestRocket = nullptr;*/
-    }
+    // Clean up the closest rocket from the previous generation
+    /*delete closestRocket;
+    closestRocket = nullptr;*/
 
     return false;
 }

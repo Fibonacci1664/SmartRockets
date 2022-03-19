@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Rocket.h"
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics.hpp>
 
 const int POPULATION_SIZE = 50;
 
@@ -33,4 +33,3 @@ private:
     std::vector<Rocket*> rockets;
     std::vector<Rocket> matingPool;
 };
-

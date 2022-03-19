@@ -17,6 +17,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
 #include "GeneticAlgorithm.h"
+#include "World.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,18 +27,20 @@ public:
 	Application(int width, int height);
 	~Application();
 
-	void run();
+	void update();
 
 private:
 	void initWindow();
 	void processWindowEvents();
 
 	sf::RenderWindow window;
+	World* theWorld;
 
 	int windowWidth;
 	int windowHeight;
 
-	GeneticAlgorithm* GA;
+	int lifetime = 360;      // 1 Generation every ~6 sec, assuming 60 FPS
+	int lifeCounter = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

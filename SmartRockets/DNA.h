@@ -23,4 +23,3 @@ private:
 	std::array<sf::Vector2f, DNA_LENGTH> genes;
 	float maxForce = 0.01f;
 };
-

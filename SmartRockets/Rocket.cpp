@@ -16,12 +16,11 @@ Rocket::Rocket(sf::RenderWindow* hwnd) : window(hwnd)
     newRocketYScale = 0.04f;
     currentRotation = 0.0f;
 
-    rocketPosition = sf::Vector2f(640.0f, 670.0f);
-    moonPosition = sf::Vector2f(640.0f, 100.0f);
+    rocketPosition = sf::Vector2f(640.0f, 670.0f);  
     velocity = sf::Vector2f(0.0f, 0.0f);
     accel = sf::Vector2f(0.0f, 0.0f);
 
-    loadTextures();
+    loadTexture();
     initRocket();
     initTarget();
     initDebug();   
@@ -55,15 +54,14 @@ void Rocket::update(float dt)
 
 void Rocket::render()
 {
-    window->draw(rocketColBoxVisualized);
-    window->draw(moonColliderVisualized);
-    window->draw(rocketSprite);
-    window->draw(moonSprite);
+    target->render();
+    window->draw(rocketColBoxVisualized);    
+    window->draw(rocketSprite);   
 }
 
 void Rocket::assessFitness()
 {
-    sf::Vector2f dirToTarget = moonSprite.getPosition() - rocketPosition;
+    sf::Vector2f dirToTarget = target->getSprite().getPosition() - rocketPosition;
     magnitude = calculateMagnitude(dirToTarget);
     fitnessScore = std::powf(1 / magnitude, 2);
 }
@@ -96,8 +94,8 @@ bool Rocket::checkItersection()
     float Y2 = rocketCollisionBox.top;
 
     // Set up variables to represent the circle target
-    float centreX = moonColliderVisualized.getPosition().x + moonSize.x * 0.5 * moonSprite.getScale().x;
-    float centreY = moonColliderVisualized.getPosition().y + moonSize.y * 0.5 * moonSprite.getScale().y;
+    float centreX = target->getDebugCircle().getPosition().x + target->getTexture().getSize().x * 0.5 * target->getSprite().getScale().x;
+    float centreY = target->getDebugCircle().getPosition().y + target->getTexture().getSize().y * 0.5 * target->getSprite().getScale().y;
 
     // Find the nearest point on the rectangle to the center of the circle
     int Xnearest = std::max(X1, std::min(centreX, X2));
@@ -107,7 +105,7 @@ bool Rocket::checkItersection()
     // distX^2 + distY^2 <= radiius^2
     int distX = Xnearest - centreX;
     int distY = Ynearest - centreY;
-    int circleRadius = moonColliderVisualized.getRadius();
+    int circleRadius = target->getDebugCircle().getRadius();
     int radSquared = circleRadius * circleRadius;
     int xSquared = distX * distX;
     int ySquared = distY * distY;
@@ -126,7 +124,6 @@ void Rocket::setRocketColliderColour()
 {
     rocketColBoxVisualized.setOutlineColor(sf::Color::White);
     rocketSprite.setColor(sf::Color::Green);
-    //rocketSprite.setScale(0.06f, 0.06f);
 }
 
 sf::Sprite Rocket::getRocketSprite()
@@ -137,11 +134,6 @@ sf::Sprite Rocket::getRocketSprite()
 void Rocket::setDNASequence(DNA newDNA)
 {
     dna = newDNA;
-}
-
-sf::Vector2f Rocket::lerp(sf::Vector2f v1, sf::Vector2f v2, float dt)
-{
-    return v1 * dt + (1 - dt) * v2;
 }
 
 sf::Vector2f Rocket::calculateUnitVector(sf::Vector2f vec)
@@ -224,20 +216,9 @@ float Rocket::calculateRotation(sf::Vector2f cartesianVec)
     return thetaDeg;
 }
 
-void Rocket::initTarget()
-{
-    moonTexture.setSmooth(true);
-    moonSprite.setTexture(moonTexture);
-    moonSize = moonTexture.getSize();
-    moonSprite.setOrigin(moonSize.x * 0.5f, moonSize.y * 0.5f);
-    moonSprite.setScale(0.1f, 0.1f);
-    moonSprite.setPosition(moonPosition); 
-}
-
 void Rocket::initDebug()
 {
     initRocketDebug();
-    initMoonDebug(); 
 }
 
 void Rocket::initRocketDebug()
@@ -250,14 +231,9 @@ void Rocket::initRocketDebug()
     rocketColBoxVisualized.setSize(sf::Vector2f(rocketCollisionBox.width, rocketCollisionBox.height));
 }
 
-void Rocket::initMoonDebug()
+void Rocket::initTarget()
 {
-    moonColliderVisualized.setFillColor(sf::Color(0, 0, 0, 0));
-    moonColliderVisualized.setOutlineColor(sf::Color::Magenta);
-    moonColliderVisualized.setOutlineThickness(1.0f);
-    moonColliderVisualized.setRadius(12.8f);
-    moonColliderVisualized.setOrigin(sf::Vector2f(12.8f, 12.8f));
-    moonColliderVisualized.setPosition(sf::Vector2f(moonSprite.getPosition().x, moonSprite.getPosition().y));  
+    target = new Target(window);    
 }
 
 void Rocket::initRocket()
@@ -274,15 +250,10 @@ void Rocket::initRocket()
     rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * newRocketXScale, rocketSize.y * newRocketYScale);
 }
 
-void Rocket::loadTextures()
+void Rocket::loadTexture()
 {
     if (!rocketTexture.loadFromFile("res/RocketSprite.png"))
     {
         std::cout << "Error loading rocket texture\n";
-    }
-
-    if (!moonTexture.loadFromFile("res/AsteroidSprite.png"))
-    {
-        std::cout << "Error loading moon texture\n";
     }
 }

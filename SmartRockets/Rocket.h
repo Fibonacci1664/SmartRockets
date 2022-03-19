@@ -1,6 +1,7 @@
 #pragma once
 #include "DNA.h"
 #include <SFML/Graphics.hpp>
+#include "Target.h"
 
 class Rocket
 {
@@ -11,7 +12,6 @@ public:
     void update(float dt);
     void render();
 
-    sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float dt);
     void assessFitness();
 
     // Getters / Setters
@@ -29,25 +29,22 @@ private:
     float calculateMagnitude(sf::Vector2f vec);
     float calculateRotation(sf::Vector2f cartesianVec);
     void addForce(sf::Vector2f newForce, float dt);
-    void initTarget();
     void initRocket();
+    void initTarget();
     void initDebug();
     void initRocketDebug();
-    void initMoonDebug();
-    void loadTextures();
+    
+    void loadTexture();
 
     sf::RenderWindow* window;
     sf::Texture rocketTexture;
     sf::Sprite rocketSprite;
-    sf::Texture moonTexture;
-    sf::Sprite moonSprite;
-
+    
     // Debug box for rocketmoonColliderVisualized
     sf::RectangleShape rocketColBoxVisualized;
     sf::FloatRect rocketCollisionBox;
     
-    // Debug circle for moon
-    sf::CircleShape moonColliderVisualized;
+    Target* target;
 
     float distanceToTarget;
     float fitnessScore;
@@ -62,9 +59,8 @@ private:
     DNA dna;
 
     sf::Vector2f rocketPosition;
-    sf::Vector2f moonPosition;
+    
     sf::Vector2f velocity;
     sf::Vector2f accel;
-    sf::Vector2u rocketSize;
-    sf::Vector2u moonSize;
+    sf::Vector2u rocketSize;  
 };

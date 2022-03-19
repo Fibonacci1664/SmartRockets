@@ -49,11 +49,11 @@ void Application::initWindow()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Application::run()
+void Application::update()
 {
     bool hasFoundTarget = false;
 
-    GA = new GeneticAlgorithm(&window);
+    theWorld = new World(&window);
 
     // Run the program as long as the window is open
     while (window.isOpen())
@@ -71,8 +71,20 @@ void Application::run()
             // since it was last calculated (in seconds) and restart the clock.
             deltaTime = clock.restart().asSeconds();
 
-            // run genetic algo here!
-            hasFoundTarget = GA->run(deltaTime);
+            if (lifeCounter < lifetime)
+            {
+                // Run genetic algo here!
+                theWorld->update(deltaTime);
+                theWorld->render();
+
+                ++lifeCounter;
+            }
+            else
+            {
+                lifeCounter = 0;
+
+                hasFoundTarget = theWorld->selectionAndReproduction();
+            }           
         }
 
         std::cout << "Target Found!\n";
