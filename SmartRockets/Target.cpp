@@ -48,7 +48,7 @@ void Target::initMoonDebug()
 
 void Target::loadTexture()
 {
-    if (!moonTexture.loadFromFile("res/AsteroidSprite.png"))
+    if (!moonTexture.loadFromFile("res/sprites/AsteroidSprite.png"))
     {
         std::cout << "Error loading moon texture\n";
     }

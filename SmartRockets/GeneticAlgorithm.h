@@ -9,10 +9,18 @@ public:
 
     void update(float dt);
     void render();
-    bool selectionAndReproduction();
+    
+    void selection();
+    void updateClosestRocket();
+    bool checkIfFoundTarget();
+    void reproduction();
+    int getGeneration();
+
+    Rocket* getClosestRocket();
 
 private:
     sf::RenderWindow* window;
     RocketPopulation* population;
+    Rocket* closestRocket;
 };
 

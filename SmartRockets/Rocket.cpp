@@ -94,8 +94,8 @@ bool Rocket::checkItersection()
     float Y2 = rocketCollisionBox.top;
 
     // Set up variables to represent the circle target
-    float centreX = target->getDebugCircle().getPosition().x + target->getTexture().getSize().x * 0.5 * target->getSprite().getScale().x;
-    float centreY = target->getDebugCircle().getPosition().y + target->getTexture().getSize().y * 0.5 * target->getSprite().getScale().y;
+    float centreX = target->getDebugCircle().getPosition().x;
+    float centreY = target->getDebugCircle().getPosition().y;
 
     // Find the nearest point on the rectangle to the center of the circle
     int Xnearest = std::max(X1, std::min(centreX, X2));
@@ -252,7 +252,7 @@ void Rocket::initRocket()
 
 void Rocket::loadTexture()
 {
-    if (!rocketTexture.loadFromFile("res/RocketSprite.png"))
+    if (!rocketTexture.loadFromFile("res/sprites/RocketSprite.png"))
     {
         std::cout << "Error loading rocket texture\n";
     }

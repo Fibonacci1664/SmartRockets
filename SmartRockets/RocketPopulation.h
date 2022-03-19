@@ -13,8 +13,7 @@ public:
 
     void update(float dt);
     void render();
-    void beginDraw();
-    void endDraw();
+    
     double mapRange(double a1, double a2, double b1, double b2, double s);
     double getTotalFitness();
     Rocket* determineBestRocket();
@@ -22,6 +21,7 @@ public:
     void fitness();
     void selection();
     void reproduction();
+    int getGeneration();
 
 private:
     void initPopulation();  
@@ -32,4 +32,6 @@ private:
     sf::RenderWindow* window;
     std::vector<Rocket*> rockets;
     std::vector<Rocket> matingPool;
+
+    int generation;
 };

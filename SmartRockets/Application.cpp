@@ -20,6 +20,9 @@
 // CONSTRUCTOR / DESTRUCTOR
 Application::Application(int width, int height) : windowWidth(width), windowHeight(height)
 {
+    lifetime = 360;
+    lifeCounter = 0;
+
     initWindow();
 }
 
@@ -74,7 +77,7 @@ void Application::update()
             if (lifeCounter < lifetime)
             {
                 // Run genetic algo here!
-                theWorld->update(deltaTime);
+                theWorld->update(deltaTime, lifeCounter);
                 theWorld->render();
 
                 ++lifeCounter;

@@ -39,8 +39,8 @@ private:
 	int windowWidth;
 	int windowHeight;
 
-	int lifetime = 360;      // 1 Generation every ~6 sec, assuming 60 FPS
-	int lifeCounter = 0;
+	int lifetime;      // 1 Generation every ~6 sec, assuming 60 FPS
+	int lifeCounter;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

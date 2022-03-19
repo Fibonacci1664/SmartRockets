@@ -4,6 +4,7 @@
 RocketPopulation::RocketPopulation(sf::RenderWindow* hwnd) : window(hwnd)
 {
     closestRocket = nullptr;
+    generation = 1;     // Gen starts at 1 NOT 0
     initPopulation();
 }
 
@@ -21,15 +22,8 @@ void RocketPopulation::update(float dt)
     }
 }
 
-void RocketPopulation::beginDraw()
-{
-    window->clear(sf::Color::Black);
-}
-
 void RocketPopulation::render()
 {
-    beginDraw();
-
     // Trying to draw the closest rocket on top of all other graphics, this is a broken stretch goal
     /*if (closestRocket)
     {
@@ -43,15 +37,7 @@ void RocketPopulation::render()
     {
         rockets[i]->render();
     }
-
-    endDraw();
 }
-
-void RocketPopulation::endDraw()
-{
-    window->display();
-}
-
 
 Rocket* RocketPopulation::determineBestRocket()
 {
@@ -194,4 +180,12 @@ void RocketPopulation::reproduction()
         // Overwrite the current Rocket at index position with that child Rocket object
         rockets[i] = child;
     }
+
+    // Once we have finished reproducting, we move to the next generation
+    ++generation;
+}
+
+int RocketPopulation::getGeneration()
+{
+    return generation;
 }
