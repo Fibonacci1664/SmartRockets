@@ -1,7 +1,9 @@
 #include "RocketPopulation.h"
+#include <iostream>
 
 RocketPopulation::RocketPopulation(sf::RenderWindow* hwnd) : window(hwnd)
 {
+    closestRocket = nullptr;
     initPopulation();
 }
 
@@ -28,6 +30,15 @@ void RocketPopulation::render()
 {
     beginDraw();
 
+    // Trying to draw the closest rocket on top of all other graphics, this is a broken stretch goal
+    /*if (closestRocket)
+    {
+        window->draw(closestRocket->getRocketSprite());
+
+        delete closestRocket;
+        closestRocket = nullptr;
+    }*/
+
     for (int i = 0; i < rockets.size(); ++i)
     {
         rockets[i]->render();
@@ -42,19 +53,21 @@ void RocketPopulation::endDraw()
 }
 
 
-float RocketPopulation::determineBestRocket()
+Rocket* RocketPopulation::determineBestRocket()
 {
     float lowestMag = rockets[0]->getMagnitude();
+    closestRocket = rockets[0];
 
     for (int i = 0; i < rockets.size(); ++i)
     {
         if (rockets[i]->getMagnitude() < lowestMag)
         {
             lowestMag = rockets[i]->getMagnitude();
+            closestRocket = rockets[i];
         }
     }
 
-    return lowestMag;
+    return closestRocket;
 }
 
 void RocketPopulation::clearMatingPool()

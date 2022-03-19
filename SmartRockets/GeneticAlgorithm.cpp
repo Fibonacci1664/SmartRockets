@@ -1,4 +1,5 @@
 #include "GeneticAlgorithm.h"
+#include <iostream>
 
 GeneticAlgorithm::GeneticAlgorithm(sf::RenderWindow* hwnd) : window(hwnd)
 {
@@ -23,16 +24,29 @@ bool GeneticAlgorithm::run(float dt)
         lifeCounter = 0;
 
         population->selection();
-        float distance = population->determineBestRocket();
 
-        // Test if found target, if distance is < 20 px
-        if (distance <= 20)
+        // Determine closest rocket
+        Rocket* closestRocket = population->determineBestRocket();
+
+        // Change the colour of the collider of that rocket
+        closestRocket->setRocketColliderColour();
+
+        // Redraw everything with the newly update closest rocket colour changed
+        population->render();
+
+        // Carry out intersection checks between the closest rocket and the target moon
+        bool targetFound = closestRocket->checkItersection();
+
+        if (targetFound)
         {
-            // Target found
             return true;
         }
 
         population->reproduction();
+
+        // Clean up the closest rocket from the previous generation
+        /*delete closestRocket;
+        closestRocket = nullptr;*/
     }
 
     return false;

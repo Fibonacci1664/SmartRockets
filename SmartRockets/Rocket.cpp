@@ -11,7 +11,10 @@ Rocket::Rocket(sf::RenderWindow* hwnd) : window(hwnd)
     magnitude = 0.0f;
     geneCounter = 0;
     maxSpeed = 10.0f;
-    speed = 2.0f;
+    speed = 0.4f;
+    newRocketXScale = 0.04f;
+    newRocketYScale = 0.04f;
+    currentRotation = 0.0f;
 
     rocketPosition = sf::Vector2f(640.0f, 670.0f);
     moonPosition = sf::Vector2f(640.0f, 100.0f);
@@ -42,18 +45,20 @@ void Rocket::update(float dt)
     }
 
     // Update the rockets invisible collision box
-    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * 0.05f, rocketSize.y * 0.05f);
+    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * newRocketXScale, rocketSize.y * newRocketYScale);
+    rocketColBoxVisualized.setRotation(currentRotation);
 
     // Update the rectangle visualisation of the rockets collision box
     rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
+    rocketColBoxVisualized.setRotation(currentRotation);
 }
 
 void Rocket::render()
 {
     window->draw(rocketColBoxVisualized);
     window->draw(moonColliderVisualized);
-    window->draw(moonSprite);
     window->draw(rocketSprite);
+    window->draw(moonSprite);
 }
 
 void Rocket::assessFitness()
@@ -76,6 +81,57 @@ float Rocket::getFitnessScore()
 DNA Rocket::getDNASequence()
 {
     return dna;
+}
+
+bool Rocket::checkItersection()
+{
+    // Set up variables to represent the rect
+    // Left
+    float X1 = rocketCollisionBox.left;
+    // Right
+    float X2 = rocketCollisionBox.left + rocketCollisionBox.width;
+    // Btm
+    float Y1 = rocketCollisionBox.top + rocketCollisionBox.height;
+    // Top
+    float Y2 = rocketCollisionBox.top;
+
+    // Set up variables to represent the circle target
+    float centreX = moonColliderVisualized.getPosition().x + moonSize.x * 0.5 * moonSprite.getScale().x;
+    float centreY = moonColliderVisualized.getPosition().y + moonSize.y * 0.5 * moonSprite.getScale().y;
+
+    // Find the nearest point on the rectangle to the center of the circle
+    int Xnearest = std::max(X1, std::min(centreX, X2));
+    int Ynearest = std::max(Y1, std::min(centreY, Y2));
+
+    // Find the distance between the nearest point and the center of the circle
+    // distX^2 + distY^2 <= radiius^2
+    int distX = Xnearest - centreX;
+    int distY = Ynearest - centreY;
+    int circleRadius = moonColliderVisualized.getRadius();
+    int radSquared = circleRadius * circleRadius;
+    int xSquared = distX * distX;
+    int ySquared = distY * distY;
+    int distSquared = xSquared + ySquared;
+
+    // Check for intersection
+    if (distSquared <= radSquared)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void Rocket::setRocketColliderColour()
+{
+    rocketColBoxVisualized.setOutlineColor(sf::Color::White);
+    rocketSprite.setColor(sf::Color::Green);
+    //rocketSprite.setScale(0.06f, 0.06f);
+}
+
+sf::Sprite Rocket::getRocketSprite()
+{
+    return rocketSprite;
 }
 
 void Rocket::setDNASequence(DNA newDNA)
@@ -145,15 +201,27 @@ void Rocket::addForce(sf::Vector2f newForce, float dt)
     // Normalise
     sf::Vector2f accel = calculateUnitVector(newForce);
     // Scale
-    //accel *= speed;
+    accel *= speed;
     // Add the accel to the velocity
     velocity += accel * dt;
     // Ensure that the velocity is limited to max magnitude of 10
     velocity = limiter(maxSpeed);
     // Update rockets position using velocity
-    rocketPosition += velocity;
+    rocketPosition += velocity;  
+    // Update the rockets rotation accroding to its velocity
+    currentRotation = calculateRotation(velocity);
+    rocketSprite.setRotation(currentRotation);
     // Set new rocket position
     rocketSprite.setPosition(rocketPosition);
+}
+
+float Rocket::calculateRotation(sf::Vector2f cartesianVec)
+{
+    // Get the direction of the velocity vector
+    float thetaRad = std::atan2f(cartesianVec.y, cartesianVec.x);
+    int thetaDeg = (thetaRad * 180) / 3.14159265359f;
+
+    return thetaDeg;
 }
 
 void Rocket::initTarget()
@@ -162,8 +230,8 @@ void Rocket::initTarget()
     moonSprite.setTexture(moonTexture);
     moonSize = moonTexture.getSize();
     moonSprite.setOrigin(moonSize.x * 0.5f, moonSize.y * 0.5f);
-    moonSprite.setPosition(moonPosition);
-    moonSprite.setScale(0.2f, 0.2f);
+    moonSprite.setScale(0.1f, 0.1f);
+    moonSprite.setPosition(moonPosition); 
 }
 
 void Rocket::initDebug()
@@ -187,8 +255,9 @@ void Rocket::initMoonDebug()
     moonColliderVisualized.setFillColor(sf::Color(0, 0, 0, 0));
     moonColliderVisualized.setOutlineColor(sf::Color::Magenta);
     moonColliderVisualized.setOutlineThickness(1.0f);
-    moonColliderVisualized.setPosition(sf::Vector2f(moonSprite.getPosition().x - (moonSize.x * 0.5f * moonSprite.getScale().x), moonSprite.getPosition().y - (moonSize.y * 0.5f * moonSprite.getScale().y)));
-    moonColliderVisualized.setRadius(25.6f);
+    moonColliderVisualized.setRadius(12.8f);
+    moonColliderVisualized.setOrigin(sf::Vector2f(12.8f, 12.8f));
+    moonColliderVisualized.setPosition(sf::Vector2f(moonSprite.getPosition().x, moonSprite.getPosition().y));  
 }
 
 void Rocket::initRocket()
@@ -197,12 +266,12 @@ void Rocket::initRocket()
     rocketSprite.setTexture(rocketTexture);
     rocketSize = rocketTexture.getSize();
     rocketSprite.setOrigin(0.0f, 0.0f);
+    rocketSprite.setRotation(-90.0f);    
+    rocketSprite.setScale(newRocketXScale, newRocketYScale);
     rocketSprite.setPosition(rocketPosition);
-    rocketSprite.setRotation(-90.0f);
-    rocketSprite.setScale(0.05f, 0.05f);
-
+    
     // Set an invisible collision box around the rocket sprite
-    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * 0.05f, rocketSize.y * 0.05f);
+    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * newRocketXScale, rocketSize.y * newRocketYScale);
 }
 
 void Rocket::loadTextures()

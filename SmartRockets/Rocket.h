@@ -19,11 +19,15 @@ public:
     float getFitnessScore();   
     void setDNASequence(DNA newDNA);
     DNA getDNASequence();
+    bool checkItersection();
+    void setRocketColliderColour();
+    sf::Sprite getRocketSprite();
 
 private:
     sf::Vector2f limiter(float topSpeed);  
     sf::Vector2f calculateUnitVector(sf::Vector2f vec);
     float calculateMagnitude(sf::Vector2f vec);
+    float calculateRotation(sf::Vector2f cartesianVec);
     void addForce(sf::Vector2f newForce, float dt);
     void initTarget();
     void initRocket();
@@ -48,9 +52,13 @@ private:
     float distanceToTarget;
     float fitnessScore;
     float magnitude;
-    int geneCounter;
+    float newRocketXScale;
+    float newRocketYScale;
     float maxSpeed;
     float speed;
+    float currentRotation;
+
+    int geneCounter;
     DNA dna;
 
     sf::Vector2f rocketPosition;

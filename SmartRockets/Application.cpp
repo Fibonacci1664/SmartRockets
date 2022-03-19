@@ -3,7 +3,6 @@
  *		- Window creation.
  *		- Polling window events.
  *		- The main GA loop.
- *		- Creation, updating and deletion of all Screen objects.
  *
  * Original @author D. Green.
  *

@@ -14,6 +14,10 @@ int main()
 
 	/*sf::CircleShape target(20);
 	target.setFillColor(sf::Color::Red);*/
+
+	// A simple hack just so that you can see the rocket
+	// which has hit the target before the application closes
+	system("pause");
 	
 	return 0;
 }

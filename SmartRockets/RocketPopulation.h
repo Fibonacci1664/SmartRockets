@@ -17,7 +17,7 @@ public:
     void endDraw();
     double mapRange(double a1, double a2, double b1, double b2, double s);
     double getTotalFitness();
-    float determineBestRocket();
+    Rocket* determineBestRocket();
     void clearMatingPool();
     void fitness();
     void selection();
@@ -26,6 +26,8 @@ public:
 private:
     void initPopulation();  
     void populateMatingPool();
+
+    Rocket* closestRocket;
 
     sf::RenderWindow* window;
     std::vector<Rocket*> rockets;
