@@ -28,6 +28,9 @@ public:
 	~Application();
 
 	void update();
+	void runLoop();
+	void setUpCSV();
+	//void runAllTests();
 
 private:
 	void initWindow();
@@ -41,6 +44,7 @@ private:
 
 	int lifetime;      // 1 Generation every ~6 sec, assuming 60 FPS
 	int lifeCounter;
+	float totalTime;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

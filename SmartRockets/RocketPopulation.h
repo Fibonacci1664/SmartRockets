@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 #include "Rocket.h"
+#include "Target.h"
+#include "Obstacle.h"
 #include <SFML/Graphics.hpp>
 
-const int POPULATION_SIZE = 50;
+extern int POPULATION_SIZE;
 
 class RocketPopulation
 {
@@ -11,27 +13,29 @@ public:
     RocketPopulation(sf::RenderWindow* hwnd);
     ~RocketPopulation();
 
-    void update(float dt);
+    void update(float dt, Obstacle* obstacle);
     void render();
     
     double mapRange(double a1, double a2, double b1, double b2, double s);
     double getTotalFitness();
     Rocket* determineBestRocket();
     void clearMatingPool();
-    void fitness();
-    void selection();
+    void fitness(Target* target);
+    bool selection(Target* target);
     void reproduction();
     int getGeneration();
+    int getMatingPoolSize();
 
 private:
     void initPopulation();  
-    void populateMatingPool();
+    bool populateMatingPool();
 
-    Rocket* closestRocket;
+    Rocket* child;
 
     sf::RenderWindow* window;
     std::vector<Rocket*> rockets;
     std::vector<Rocket> matingPool;
 
     int generation;
+    int bestIndex;
 };

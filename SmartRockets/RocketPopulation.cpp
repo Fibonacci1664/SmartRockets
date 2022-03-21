@@ -3,57 +3,63 @@
 
 RocketPopulation::RocketPopulation(sf::RenderWindow* hwnd) : window(hwnd)
 {
-    closestRocket = nullptr;
+    //closestRocket = nullptr;
+    child = nullptr;
     generation = 1;     // Gen starts at 1 NOT 0
+    bestIndex = 0;
     initPopulation();
 }
 
 RocketPopulation::~RocketPopulation()
 {
-
+    if (rockets.size() > 0)
+    {
+        for (int i = 0; i < rockets.size(); ++i)
+        {
+            if (rockets[i])
+            {
+                delete rockets[i];
+                rockets[i] = nullptr;
+            }
+        }
+    }
 }
 
-void RocketPopulation::update(float dt)
+void RocketPopulation::update(float dt, Obstacle* obstacle)
 {
     // Update each rockets position according the velocity genes returned from each rockets DNA
     for (int i = 0; i < rockets.size(); ++i)
     {
-        rockets[i]->update(dt);
+        rockets[i]->update(dt, obstacle);
     }
 }
 
 void RocketPopulation::render()
 {
-    // Trying to draw the closest rocket on top of all other graphics, this is a broken stretch goal
-    /*if (closestRocket)
-    {
-        window->draw(closestRocket->getRocketSprite());
-
-        delete closestRocket;
-        closestRocket = nullptr;
-    }*/
-
     for (int i = 0; i < rockets.size(); ++i)
     {
         rockets[i]->render();
     }
+
+    // Render the best rocket on top of all other rockets
+    rockets[bestIndex]->render();
 }
 
 Rocket* RocketPopulation::determineBestRocket()
 {
     float lowestMag = rockets[0]->getMagnitude();
-    closestRocket = rockets[0];
+    bestIndex = 0;
 
     for (int i = 0; i < rockets.size(); ++i)
     {
         if (rockets[i]->getMagnitude() < lowestMag)
         {
             lowestMag = rockets[i]->getMagnitude();
-            closestRocket = rockets[i];
+            bestIndex = i;
         }
     }
 
-    return closestRocket;
+    return rockets[bestIndex];
 }
 
 void RocketPopulation::clearMatingPool()
@@ -69,24 +75,24 @@ void RocketPopulation::initPopulation()
     }
 }
 
-void RocketPopulation::fitness()
+void RocketPopulation::fitness(Target* target)
 {
     for (int i = 0; i < rockets.size(); ++i)
     {
-        rockets[i]->assessFitness();
+        rockets[i]->assessFitness(target);
     }
 }
 
-void RocketPopulation::selection()
+bool RocketPopulation::selection(Target* target)
 {
     // First step of selection is to calculate the fitness of each rocket
-    fitness();
+    fitness(target);
 
     // Clear mating pool ready for repopulation
     matingPool.clear();
 
     // The next step of selection is to build a mating pool
-    populateMatingPool();
+    return populateMatingPool();
 }
 
 //                                           a1                     a2                     b1                   b2                   s
@@ -126,15 +132,32 @@ double RocketPopulation::getTotalFitness()
     return totalFitnessScore;
 }
 
-void RocketPopulation::populateMatingPool()
+int RocketPopulation::getMatingPoolSize()
 {
-    double totalFitness = getTotalFitness();
+    return matingPool.size();
+}
+
+bool RocketPopulation::populateMatingPool()
+{
+    double totalFitness = 0.0;
+    totalFitness = getTotalFitness();
+    //totalFitness *= 1000;
+    double fitnessNormed = 0.0;
+    int n = 0;
+    float fitnessScore = 0.0f;
 
     // Loop over all the rockets and get their fitness scores
     for (int i = 0; i < rockets.size(); ++i)
     {
-        double fitnessNormed = mapRange(0, totalFitness, 0, 1, rockets[i]->getFitnessScore());
-        int n = std::floor(fitnessNormed * 100);
+        //double fitnessNormed = 0.0;
+        fitnessScore = rockets[i]->getFitnessScore();
+        //fitnessScore *= 100;
+        // Map to 0 - 1
+        fitnessNormed = mapRange(0, totalFitness, 0, 1, fitnessScore);
+        //fitnessNormed = fitnessScore / totalFitness;
+        //int n = 0;
+        n = std::floor(fitnessNormed * POPULATION_SIZE);
+        //n *= 2;
 
         // Add each member of the population n number of times, this ensures
         // The fittest members have the highest probablity of passing on their genes
@@ -144,6 +167,16 @@ void RocketPopulation::populateMatingPool()
             matingPool.push_back(*rockets[i]);
         }
     }
+
+    // If the mating pool is empty it means all the rockets hit the obstacle and so the target is not found, FAIL!
+    if (matingPool.empty())
+    {
+        std::cout << "Mating Pool is Empty, why??\n";
+
+        return true;
+    }
+
+    return false;
 }
 
 void RocketPopulation::reproduction()
@@ -168,7 +201,7 @@ void RocketPopulation::reproduction()
         childDNA.mutate();
 
         // Create a child rocket
-        Rocket* child = new Rocket(window);
+        child = new Rocket(window);
 
         // Set that child Rockets DNA sequence
         child->setDNASequence(childDNA);

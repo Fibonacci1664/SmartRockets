@@ -4,6 +4,10 @@
 
 DNA::DNA()
 {
+    //DNAlength = 10;
+    //mutationRate = 1;
+    maxForce = 0.1f;
+
     createDNAstrand();
 }
 
@@ -58,7 +62,7 @@ void DNA::mutate()
     {
         int randChance = rand() % 100;
 
-        if (randChance < mutationRate)
+        if (randChance < MUTATION_RATE)
         {
             // Get a new random 2D vector
             sf::Vector2f randVec = getRandom2DVector();

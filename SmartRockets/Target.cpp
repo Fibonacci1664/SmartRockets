@@ -23,7 +23,11 @@ void Target::update(float dt)
 void Target::render()
 {
     window->draw(moonSprite);
-    window->draw(moonColliderVisualized);
+
+    if (displayDebug)
+    {
+        window->draw(moonColliderVisualized);
+    }
 }
 
 void Target::initTarget()
@@ -41,8 +45,8 @@ void Target::initMoonDebug()
     moonColliderVisualized.setFillColor(sf::Color(0, 0, 0, 0));
     moonColliderVisualized.setOutlineColor(sf::Color::Magenta);
     moonColliderVisualized.setOutlineThickness(1.0f);
-    moonColliderVisualized.setRadius(12.8f);
-    moonColliderVisualized.setOrigin(sf::Vector2f(12.8f, 12.8f));
+    moonColliderVisualized.setRadius(14.0f);
+    moonColliderVisualized.setOrigin(sf::Vector2f(14.0f, 14.0f));
     moonColliderVisualized.setPosition(sf::Vector2f(moonSprite.getPosition().x, moonSprite.getPosition().y));
 }
 

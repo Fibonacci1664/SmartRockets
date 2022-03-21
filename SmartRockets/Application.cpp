@@ -14,21 +14,35 @@
  // INCLUDES
 #include "Application.h"
 #include <iostream>
+#include <chrono>
+#include <fstream>
+
+int POPULATION_SIZE = 100;
+int MUTATION_RATE = 1;
+bool TESTING = true;
+
+// Output to CSV file for creating graphs of data
+std::ofstream SR_data("SmartRockets_Pop_100.csv");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CONSTRUCTOR / DESTRUCTOR
 Application::Application(int width, int height) : windowWidth(width), windowHeight(height)
 {
-    lifetime = 360;
+    lifetime = 500;         // Roughly 7 gens a minute
     lifeCounter = 0;
+    totalTime = 0.0f;
 
     initWindow();
 }
 
 Application::~Application()
 {
-
+    if (theWorld)
+    {
+        delete theWorld;
+        theWorld = nullptr;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,47 +68,126 @@ void Application::initWindow()
 
 void Application::update()
 {
+    int testNum = 0;
+    int numOfTests = 5;
     bool hasFoundTarget = false;
-
     theWorld = new World(&window);
 
     // Run the program as long as the window is open
     while (window.isOpen())
     {
-        // Initialise objects for delta time
-        sf::Clock clock;
-        float deltaTime;
-
-        // If the game isn't over, keep processing stuff
-        while (!hasFoundTarget)
+        if (TESTING)
         {
-            processWindowEvents();
-
-            // Calculate delta time. How much time has passed 
-            // since it was last calculated (in seconds) and restart the clock.
-            deltaTime = clock.restart().asSeconds();
-
-            if (lifeCounter < lifetime)
+            while (testNum < numOfTests)
             {
-                // Run genetic algo here!
-                theWorld->update(deltaTime, lifeCounter);
-                theWorld->render();
+                runLoop();
 
-                ++lifeCounter;
+                int genToSolve = theWorld->getGenerationToSolve();
+
+                SR_data << '\n';
+                SR_data << (testNum + 1) << "," << POPULATION_SIZE << "," << MUTATION_RATE << "," << genToSolve << "," << totalTime;
+
+                ++testNum;
+
+                // Zero the timer
+                totalTime = 0.0f;
+
+                // Clean up old world
+                delete theWorld;
+                theWorld = nullptr;
+
+                // Create a new world ready for the next loop
+                theWorld = new World(&window);
             }
-            else
-            {
-                lifeCounter = 0;
-
-                hasFoundTarget = theWorld->selectionAndReproduction();
-            }           
         }
-
-        std::cout << "Target Found!\n";
+        else
+        {
+            runLoop();
+        }
 
         break;
     }
 }
+
+void Application::runLoop()
+{
+    bool allRocketsDead = false;
+    bool targetNotFound = false;
+    bool hasFoundTarget = false;
+    
+    // Initialise objects for delta time
+    sf::Clock clock;
+    float deltaTime = 0.0f;
+
+    // If the game isn't over, keep processing stuff
+    while (!hasFoundTarget)
+    {
+        processWindowEvents();
+
+        // Calculate delta time. How much time has passed 
+        // since it was last calculated (in seconds) and restart the clock.
+        deltaTime = clock.restart().asSeconds();
+
+        // Accumulate the total time for testing and outputting to csv.
+        totalTime += deltaTime;
+
+        if (lifeCounter < lifetime)
+        {
+            theWorld->update(deltaTime, lifeCounter);
+            theWorld->render();
+
+            ++lifeCounter;
+        }
+        else
+        {
+            lifeCounter = 0;
+
+            allRocketsDead = theWorld->selection();
+
+            if (allRocketsDead)
+            {
+                targetNotFound = true;
+                break;
+            }
+
+            theWorld->updateBestRocketAndUI();
+
+            hasFoundTarget = theWorld->reproduction();
+        }
+    }
+
+    if (targetNotFound)
+    {
+        std::cout << "Target Not Found!\n";
+    }
+
+    std::cout << "Target Found!\n";
+}
+
+void Application::setUpCSV()
+{
+    SR_data << "World #" << "," << "Total Population" << "," << "Mutation Rate %" << "," << "# Gen To Solve" << "," << "Time Taken (s)";
+}
+
+//void Application::runAllTests()
+//{
+//    int numOfTests = 0;
+//
+//    while (numOfTests < 10)
+//    {
+//        runLoop();
+//
+//        int genToSolve = theWorld->getGenerationToSolve();
+//
+//        SR_data << '\n' << ",";
+//        SR_data << POPULATION_SIZE << "," << MUTATION_RATE << "," << genToSolve << "," << totalTime;
+//
+//        ++numOfTests;
+//
+//        // Zero the timer
+//        totalTime = 0.0f;
+//    }
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -24,6 +24,11 @@ UI::UI(sf::RenderWindow* hwnd) : window(hwnd)
 	generation = 0;
 	lifeCyclesRemaining = 0;
 	closestMagnitude = 0;
+	matingPoolSize = 0;
+	totalTime = 0;
+	hours = 0;
+	mins = 0;
+	secs = 0;
 
 	initUI();
 }
@@ -60,12 +65,30 @@ void UI::initUI()
 	
 	// Set up the Closest Magnitude text
 	closestMagnitudeText.setFont(font);
-	closestMagnitudeText.setString("Closest Rockets Magnitude to Target #: " + std::to_string(closestMagnitude));
+	closestMagnitudeText.setString("Best Magnitude Without Hitting Obstacle #: " + std::to_string(closestMagnitude));
 	closestMagnitudeText.setCharacterSize(14);
 	closestMagnitudeText.setFillColor(sf::Color::Red);
 	closestMagnitudeText.setOutlineColor(sf::Color::Black);
 	closestMagnitudeText.setOutlineThickness(1.0f);
 	closestMagnitudeText.setPosition(20.0f, 115.0f);
+	
+	// Set up the total time taken text
+	totalTimeTakenText.setFont(font);
+	totalTimeTakenText.setString("Total Time Taken: " + std::to_string(hours) + "hrs " + std::to_string(mins) + "mins " + std::to_string(secs) + "secs");
+	totalTimeTakenText.setCharacterSize(14);
+	totalTimeTakenText.setFillColor(sf::Color::Red);
+	totalTimeTakenText.setOutlineColor(sf::Color::Black);
+	totalTimeTakenText.setOutlineThickness(1.0f);
+	totalTimeTakenText.setPosition(20.0f, 165.0f);
+	
+	// Set up the mating pool size text
+	matingPoolSizeText.setFont(font);
+	matingPoolSizeText.setString("Mating Pool Size #: " + std::to_string(matingPoolSize));
+	matingPoolSizeText.setCharacterSize(14);
+	matingPoolSizeText.setFillColor(sf::Color::Red);
+	matingPoolSizeText.setOutlineColor(sf::Color::Black);
+	matingPoolSizeText.setOutlineThickness(1.0f);
+	matingPoolSizeText.setPosition(20.0f, 215.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,20 +103,38 @@ void UI::loadFont()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void UI::update(float dt, int gen, int lifeCycles)
+void UI::update(float dt, int gen, int lifeCycles, int matingPoolSz)
 {
 	generation = gen;
 	lifeCyclesRemaining = lifeCycles;
+	matingPoolSize = matingPoolSz;
+	totalTime += dt;
+	secs = totalTime;
+	
+	if (totalTime >= 60)
+	{
+		++mins;
+
+		if (mins >= 60)
+		{
+			++hours;
+			mins = 0;
+		}
+
+		totalTime = 0;
+	}
 
 	generationText.setString("Generation #: " + std::to_string(generation));
-	lifeCyclesText.setString("Life Cycles Remaining #: " + std::to_string(359 - lifeCyclesRemaining));
+	lifeCyclesText.setString("Life Cycles Remaining #: " + std::to_string(499 - lifeCyclesRemaining));
+	totalTimeTakenText.setString("Total Time Taken: " + std::to_string(hours) + "hrs " + std::to_string(mins) + "mins " + std::to_string(secs) + "secs");
+	matingPoolSizeText.setString("Mating Pool Size #: " + std::to_string(matingPoolSize));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void UI::updateMagnitudeUI()
 {
-	closestMagnitudeText.setString("Closest Rockets Magnitude to Target #: " + std::to_string(closestMagnitude) + " Pixels");
+	closestMagnitudeText.setString("Best Magnitude Without Hitting Obstacle #: " + std::to_string(closestMagnitude));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +144,8 @@ void UI::render()
 	window->draw(generationText);
 	window->draw(lifeCyclesText);
 	window->draw(closestMagnitudeText);
+	window->draw(totalTimeTakenText);
+	window->draw(matingPoolSizeText);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

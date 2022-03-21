@@ -9,13 +9,17 @@ GeneticAlgorithm::GeneticAlgorithm(sf::RenderWindow* hwnd) : window(hwnd)
 
 GeneticAlgorithm::~GeneticAlgorithm()
 {
-
+    if (population)
+    {
+        delete population;
+        population = nullptr;
+    }
 }
 
-void GeneticAlgorithm::update(float dt)
+void GeneticAlgorithm::update(float dt, Obstacle* obstacle)
 {
     // Update the rocket population
-    population->update(dt);
+    population->update(dt, obstacle);
 }
 
 void GeneticAlgorithm::render()
@@ -23,10 +27,10 @@ void GeneticAlgorithm::render()
     population->render();
 }
 
-void GeneticAlgorithm::selection()
+bool GeneticAlgorithm::selection(Target* target)
 {
     // Get fitness scores for each rocket (magnitude to target)
-    population->selection();
+    return population->selection(target);
 }
 
 void GeneticAlgorithm::updateClosestRocket()
@@ -38,10 +42,10 @@ void GeneticAlgorithm::updateClosestRocket()
     closestRocket->setRocketColliderColour();
 }
 
-bool GeneticAlgorithm::checkIfFoundTarget()
+bool GeneticAlgorithm::checkIfFoundTarget(Target* target)
 {
     // Carry out intersection checks between the closest rocket and the target moon
-    bool targetFound = closestRocket->checkItersection();
+    bool targetFound = closestRocket->checkItersection(target);
 
     if (targetFound)
     {
@@ -54,28 +58,20 @@ bool GeneticAlgorithm::checkIfFoundTarget()
 void GeneticAlgorithm::reproduction()
 {
     population->reproduction();
-}
 
-//bool GeneticAlgorithm::selectionAndReproduction()
-//{
-//    
-//
-//    
-//
-//    
-//
-//    
-//
-//    // Clean up the closest rocket from the previous generation
-//    /*delete closestRocket;
-//    closestRocket = nullptr;*/
-//
-//    return false;
-//}
+    // Clean up
+    /*delete closestRocket;
+    closestRocket = nullptr;*/
+}
 
 int GeneticAlgorithm::getGeneration()
 {
     return population->getGeneration();
+}
+
+int GeneticAlgorithm::getMatingPoolSize()
+{
+    return population->getMatingPoolSize();
 }
 
 Rocket* GeneticAlgorithm::getClosestRocket()

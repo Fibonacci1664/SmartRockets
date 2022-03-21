@@ -11,59 +11,99 @@ Rocket::Rocket(sf::RenderWindow* hwnd) : window(hwnd)
     magnitude = 0.0f;
     geneCounter = 0;
     maxSpeed = 10.0f;
-    speed = 0.4f;
-    newRocketXScale = 0.04f;
-    newRocketYScale = 0.04f;
+    speed = 1.0f;
+    newRocketXScale = 0.1f;
+    newRocketYScale = 0.1f;
     currentRotation = 0.0f;
 
-    rocketPosition = sf::Vector2f(640.0f, 670.0f);  
+    hitObstacle = false;
+
+    rocketPosition = sf::Vector2f(640.0f, 600.0f);  
     velocity = sf::Vector2f(0.0f, 0.0f);
     accel = sf::Vector2f(0.0f, 0.0f);
 
     loadTexture();
     initRocket();
-    initTarget();
-    initDebug();   
+
+    if (displayDebug)
+    {
+        initDebug();
+    }
 }
 
 Rocket::~Rocket()
 {
-
+    
 }
 
-void Rocket::update(float dt)
+void Rocket::update(float dt, Obstacle* obstacle)
 {
-    sf::Vector2f accelGeneVector = dna.getGene(geneCounter);
-    addForce(accelGeneVector, dt);
-    ++geneCounter;
-
-    // Reset the gene indexing
-    if (geneCounter == 10)
+    if (!hitObstacle)
     {
-        geneCounter = 0;
+        sf::Vector2f accelGeneVector = dna.getGene(geneCounter);
+
+        addForce(accelGeneVector, dt);
+        ++geneCounter;
+
+        // Reset the gene indexing
+        if (geneCounter == 10)
+        {
+            geneCounter = 0;
+        }
+
+        // Update the rockets invisible collision box
+        rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, 2.5f, 2.5f);
+
+        // Update the rectangle visualisation of the rockets collision box
+        // AABB FloatRect is axis aligned by definition so while the rockets rotate according to their velocity
+        // The AABB FloatRect and by extension the RectangleShape to visualise the FloatRect collider does NOT rotate
+        // While it would be possible to rotate the RectangleShape this would be completely pointless and purely
+        // cosmetic as the AABB FloatRect collider does NOT rotate
+        if (displayDebug)
+        {
+            rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
+        }
     }
 
-    // Update the rockets invisible collision box
-    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * newRocketXScale, rocketSize.y * newRocketYScale);
-    rocketColBoxVisualized.setRotation(currentRotation);
+    hitObstacle = checkObstacleCollisions(obstacle);
 
-    // Update the rectangle visualisation of the rockets collision box
-    rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
-    rocketColBoxVisualized.setRotation(currentRotation);
+    /*if (hitObstacle)
+    {
+        std::cout << "Test";
+    }*/
 }
 
 void Rocket::render()
 {
-    target->render();
-    window->draw(rocketColBoxVisualized);    
-    window->draw(rocketSprite);   
+    window->draw(rocketSprite);
+
+    if (displayDebug)
+    {
+        window->draw(rocketColBoxVisualized);
+    }
 }
 
-void Rocket::assessFitness()
+void Rocket::assessFitness(Target* target)
 {
-    sf::Vector2f dirToTarget = target->getSprite().getPosition() - rocketPosition;
+    float xDir = target->getSprite().getPosition().x - rocketPosition.x;
+    float yDir = target->getSprite().getPosition().y - rocketPosition.y;
+
+    //sf::Vector2f dirToTarget = target->getSprite().getPosition() - rocketPosition;
+    sf::Vector2f dirToTarget = sf::Vector2f(xDir, yDir);
     magnitude = calculateMagnitude(dirToTarget);
     fitnessScore = std::powf(1 / magnitude, 2);
+
+    // Punish the rockets that hit the obstacle
+    if (hitObstacle)
+    {
+        // Reduce the fitness to increase the likelyhood of not making it to the next generation
+        fitnessScore *= 0.1f;
+
+        // A higher magnitude means worse performance as technically the rocket would be further
+        // from the target, therefore, if the rocket hits the obstacle, then set this rockets
+        // magnitude to some extremely high arbitrary value.
+        magnitude = 1000000.0f;
+    }
 }
 
 float Rocket::getMagnitude()
@@ -81,7 +121,9 @@ DNA Rocket::getDNASequence()
     return dna;
 }
 
-bool Rocket::checkItersection()
+// Something is not quite right with this check, it might be related to the collision box however
+// rather than this function
+bool Rocket::checkItersection(Target* target)
 {
     // Set up variables to represent the rect
     // Left
@@ -199,18 +241,22 @@ void Rocket::addForce(sf::Vector2f newForce, float dt)
     // Ensure that the velocity is limited to max magnitude of 10
     velocity = limiter(maxSpeed);
     // Update rockets position using velocity
-    rocketPosition += velocity;  
+    rocketPosition += velocity;
     // Update the rockets rotation accroding to its velocity
     currentRotation = calculateRotation(velocity);
+    // Not sure why I need to -90 to get the sprite to be rotated correctly, think it's to do with
+    // the fact the the unit circle 0 deg starts at the East pos, and the rotation for SFML 0 deg starts a the North pos, not sure though??
+    currentRotation -= 90;
     rocketSprite.setRotation(currentRotation);
     // Set new rocket position
     rocketSprite.setPosition(rocketPosition);
 }
 
-float Rocket::calculateRotation(sf::Vector2f cartesianVec)
+float Rocket::calculateRotation(sf::Vector2f vel)
 {
-    // Get the direction of the velocity vector
-    float thetaRad = std::atan2f(cartesianVec.y, cartesianVec.x);
+    sf::Vector2f dir = -vel;
+
+    float thetaRad = std::atan2(dir.y, dir.x);
     int thetaDeg = (thetaRad * 180) / 3.14159265359f;
 
     return thetaDeg;
@@ -225,15 +271,19 @@ void Rocket::initRocketDebug()
 {
     rocketColBoxVisualized.setFillColor(sf::Color(0, 0, 0, 0));
     rocketColBoxVisualized.setOutlineColor(sf::Color::Magenta);
-    rocketColBoxVisualized.setOutlineThickness(1.0f);
-    rocketColBoxVisualized.setRotation(rocketSprite.getRotation());
+    rocketColBoxVisualized.setOutlineThickness(1.0f); 
     rocketColBoxVisualized.setPosition(sf::Vector2f(rocketCollisionBox.left, rocketCollisionBox.top));
-    rocketColBoxVisualized.setSize(sf::Vector2f(rocketCollisionBox.width, rocketCollisionBox.height));
+    rocketColBoxVisualized.setSize(sf::Vector2f(2.5f, 2.5f));  
 }
 
-void Rocket::initTarget()
+bool Rocket::checkObstacleCollisions(Obstacle* obstacle)
 {
-    target = new Target(window);    
+    if (rocketCollisionBox.intersects(obstacle->getCollisonBox()))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void Rocket::initRocket()
@@ -241,18 +291,22 @@ void Rocket::initRocket()
     rocketTexture.setSmooth(true);
     rocketSprite.setTexture(rocketTexture);
     rocketSize = rocketTexture.getSize();
-    rocketSprite.setOrigin(0.0f, 0.0f);
-    rocketSprite.setRotation(-90.0f);    
+    
+    // Origin top centre, thrust would normally come from the btm centre, however due to issues with using AABB and not OBB
+    // I struglled to move the collider according to how much the rocket rotated by its change in x,y as of course
+    // AABB colliders do not rotate by definition, so trying to move the collider to the tip of the rocket every frame
+    // became a bit of a problem, so left it at this solution for the time being, needs OBB
+    rocketSprite.setOrigin(rocketSprite.getPosition().x + rocketSize.x * 0.5f, rocketSprite.getPosition().y);
     rocketSprite.setScale(newRocketXScale, newRocketYScale);
     rocketSprite.setPosition(rocketPosition);
     
     // Set an invisible collision box around the rocket sprite
-    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x, rocketSprite.getPosition().y, rocketSize.x * newRocketXScale, rocketSize.y * newRocketYScale);
+    rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x - 2.0f, rocketSprite.getPosition().y - 37.8f, 2.5f, 2.5f);
 }
 
 void Rocket::loadTexture()
 {
-    if (!rocketTexture.loadFromFile("res/sprites/RocketSprite.png"))
+    if (!rocketTexture.loadFromFile("res/sprites/rocket_2.png"))
     {
         std::cout << "Error loading rocket texture\n";
     }

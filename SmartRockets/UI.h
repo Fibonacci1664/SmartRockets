@@ -25,7 +25,7 @@ public:
 	UI(sf::RenderWindow* window);
 	~UI();
 
-	void update(float dt, int gen, int lifeCycles);
+	void update(float dt, int gen, int lifeCycles, int matingPoolSz);
 	void updateMagnitudeUI();
 	void render();
 	void setClosestRocketMagnitude(int mag);
@@ -39,10 +39,17 @@ private:
 	sf::Text generationText;
 	sf::Text lifeCyclesText;
 	sf::Text closestMagnitudeText;
+	sf::Text totalTimeTakenText;
+	sf::Text matingPoolSizeText;
 
 	int generation;
 	int lifeCyclesRemaining;
 	int closestMagnitude;	// Truncate to int
+	int matingPoolSize;
+	int hours;
+	int mins;
+	int secs;
+	float totalTime;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

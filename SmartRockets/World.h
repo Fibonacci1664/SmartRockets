@@ -12,17 +12,24 @@ public:
 
 	void update(float dt, int cycles);
 	void render();
-	bool selectionAndReproduction();
+	bool selection();
+	bool reproduction();
+	void updateBestRocketAndUI();
 	void refresh();
+	int getGenerationToSolve();
 
 private:
+	void initTarget();
+	void initObstacle();
 	void initWorld();
 	void loadTexture();
 	void beginDraw();
 	void endDraw();
 
 	sf::RenderWindow* window;
+	Target* target;
 	GeneticAlgorithm* GA;
+	Obstacle* obstacle;
 	UI* ui;
 
 	sf::Texture bgTexture;

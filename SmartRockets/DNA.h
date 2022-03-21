@@ -2,7 +2,8 @@
 #include <array>
 #include <SFML/System/Vector2.hpp>
 
-const int DNA_LENGTH = 10;
+const int DNA_LENGTH = 20;
+extern int MUTATION_RATE;
 
 class DNA
 {
@@ -18,8 +19,7 @@ private:
 	void createDNAstrand();
 	sf::Vector2f getRandom2DVector();
 
-	int DNAlength = 10;
-	int mutationRate = 1;
+	int DNAlength;
 	std::array<sf::Vector2f, DNA_LENGTH> genes;
-	float maxForce = 0.01f;
+	float maxForce;
 };

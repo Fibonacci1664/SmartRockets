@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+extern bool displayDebug;
+
 class Target
 {
 public:

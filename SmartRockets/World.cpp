@@ -4,20 +4,34 @@
 World::World(sf::RenderWindow* hwnd) : window(hwnd)
 {
 	initWorld();
+	initTarget();
+	initObstacle();
 }
 
 World::~World()
 {
+	if (GA)
+	{
+		delete GA;
+		GA = nullptr;
+	}
 
+	if (ui)
+	{
+		delete ui;
+		ui = nullptr;
+	}
 }
 
 void World::update(float dt, int cycles)
 {
 	// Get the latest generation
 	generation = GA->getGeneration();
+	GA->update(dt, obstacle);
 
-	GA->update(dt);
-	ui->update(dt, generation, cycles);
+	int matingPoolSize = GA->getMatingPoolSize();
+
+	ui->update(dt, generation, cycles, matingPoolSize);
 }
 
 void World::beginDraw()
@@ -30,8 +44,19 @@ void World::render()
 	beginDraw();
 
 	window->draw(bgSprite);
-	ui->render();
+
+	if (target)
+	{
+		target->render();
+	}
+
+	if (obstacle)
+	{
+		obstacle->render();
+	}
+
 	GA->render();
+	ui->render();
 
 	endDraw();
 }
@@ -41,10 +66,26 @@ void World::refresh()
 	beginDraw();
 
 	window->draw(bgSprite);
-	ui->render();
+
+	if (target)
+	{
+		target->render();
+	}
+
+	if (obstacle)
+	{
+		obstacle->render();
+	}
+
 	GA->render();
+	ui->render();
 
 	endDraw();
+}
+
+int World::getGenerationToSolve()
+{
+	return generation;
 }
 
 void World::endDraw()
@@ -52,11 +93,14 @@ void World::endDraw()
 	window->display();
 }
 
-bool World::selectionAndReproduction()
+bool World::selection()
 {
 	// Carry out selection, i.e. generate fitness scores
-	GA->selection();
+	return GA->selection(target);
+}
 
+void World::updateBestRocketAndUI()
+{
 	// Update the colour of the closest rocket and the UI's magnitude
 	GA->updateClosestRocket();
 	ui->setClosestRocketMagnitude(GA->getClosestRocket()->getMagnitude());
@@ -64,9 +108,12 @@ bool World::selectionAndReproduction()
 
 	// Redraw everything to reflect the colour change of the closest rocket and UI update
 	refresh();
+}
 
-	// Check if the was an intersection of the closest rocket and the target
-	if (GA->checkIfFoundTarget())
+bool World::reproduction()
+{
+	// Check if there was an intersection of the closest rocket and the target
+	if (GA->checkIfFoundTarget(target))
 	{
 		return true;
 	}
@@ -88,6 +135,16 @@ void World::initWorld()
 	GA = new GeneticAlgorithm(window);
 	ui = new UI(window);
 	generation = GA->getGeneration();
+}
+
+void World::initTarget()
+{
+	target = new Target(window);
+}
+
+void World::initObstacle()
+{
+	obstacle = new Obstacle(window);
 }
 
 void World::loadTexture()
