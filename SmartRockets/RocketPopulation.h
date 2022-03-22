@@ -31,6 +31,9 @@ private:
     bool populateMatingPool();
 
     Rocket* child;
+    DNA parentA_DNA;
+    DNA parentB_DNA;
+    DNA childDNA;
 
     sf::RenderWindow* window;
     std::vector<Rocket*> rockets;

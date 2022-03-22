@@ -17,19 +17,19 @@
 #include <chrono>
 #include <fstream>
 
-int POPULATION_SIZE = 100;
+int POPULATION_SIZE = 10;
 int MUTATION_RATE = 1;
 bool TESTING = true;
 
 // Output to CSV file for creating graphs of data
-std::ofstream SR_data("SmartRockets_Pop_100.csv");
+std::ofstream SR_data("SmartRockets_Pop_10.csv");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CONSTRUCTOR / DESTRUCTOR
 Application::Application(int width, int height) : windowWidth(width), windowHeight(height)
 {
-    lifetime = 500;         // Roughly 7 gens a minute
+    lifetime = 660;     // If you change this REMEMBER to update the DNA class for gene size to the same value and the UI for updating the gens remaining, really need to improve this!
     lifeCounter = 0;
     totalTime = 0.0f;
 
@@ -169,26 +169,6 @@ void Application::setUpCSV()
     SR_data << "World #" << "," << "Total Population" << "," << "Mutation Rate %" << "," << "# Gen To Solve" << "," << "Time Taken (s)";
 }
 
-//void Application::runAllTests()
-//{
-//    int numOfTests = 0;
-//
-//    while (numOfTests < 10)
-//    {
-//        runLoop();
-//
-//        int genToSolve = theWorld->getGenerationToSolve();
-//
-//        SR_data << '\n' << ",";
-//        SR_data << POPULATION_SIZE << "," << MUTATION_RATE << "," << genToSolve << "," << totalTime;
-//
-//        ++numOfTests;
-//
-//        // Zero the timer
-//        totalTime = 0.0f;
-//    }
-//}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Application::processWindowEvents()
@@ -209,6 +189,19 @@ void Application::processWindowEvents()
             case sf::Event::Resized:
             {
                 window.setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
+                break;
+            }
+            case sf::Event::KeyPressed:
+            {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && displayDebug)
+                {
+                    displayDebug = false;
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !displayDebug)
+                {
+                    displayDebug = true;
+                }
+
                 break;
             }
         }

@@ -58,10 +58,6 @@ bool GeneticAlgorithm::checkIfFoundTarget(Target* target)
 void GeneticAlgorithm::reproduction()
 {
     population->reproduction();
-
-    // Clean up
-    /*delete closestRocket;
-    closestRocket = nullptr;*/
 }
 
 int GeneticAlgorithm::getGeneration()

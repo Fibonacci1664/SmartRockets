@@ -18,7 +18,7 @@ public:
     void assessFitness(Target* target);
 
     // Getters / Setters
-    float getMagnitude();
+    float getDistanceToTarget();
     float getFitnessScore();   
     void setDNASequence(DNA newDNA);
     DNA getDNASequence();
@@ -27,7 +27,7 @@ public:
     sf::Sprite getRocketSprite();
 
 private:
-    sf::Vector2f limiter(float topSpeed);  
+    sf::Vector2f limiter();  
     sf::Vector2f calculateUnitVector(sf::Vector2f vec);
     float calculateMagnitude(sf::Vector2f vec);
     float calculateRotation(sf::Vector2f vel);
@@ -49,7 +49,6 @@ private:
 
     float distanceToTarget;
     float fitnessScore;
-    float magnitude;
     float newRocketXScale;
     float newRocketYScale;
     float maxSpeed;

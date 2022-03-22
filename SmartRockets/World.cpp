@@ -103,7 +103,7 @@ void World::updateBestRocketAndUI()
 {
 	// Update the colour of the closest rocket and the UI's magnitude
 	GA->updateClosestRocket();
-	ui->setClosestRocketMagnitude(GA->getClosestRocket()->getMagnitude());
+	ui->setClosestRocketMagnitude(GA->getClosestRocket()->getDistanceToTarget());
 	ui->updateMagnitudeUI();
 
 	// Redraw everything to reflect the colour change of the closest rocket and UI update

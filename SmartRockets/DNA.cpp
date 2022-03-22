@@ -4,10 +4,7 @@
 
 DNA::DNA()
 {
-    //DNAlength = 10;
-    //mutationRate = 1;
     maxForce = 0.1f;
-
     createDNAstrand();
 }
 
@@ -46,7 +43,7 @@ sf::Vector2f DNA::getRandom2DVector()
     // Get some random force 0 - maxForce
     std::random_device rd;
     std::default_random_engine eng(rd());
-    std::uniform_real_distribution<float> distr(0, maxForce);
+    std::uniform_real_distribution<float> distr(0.0f, maxForce);
     float randForce = distr(eng);
 
     // Multiply the random vec in both x & y by the randForce
@@ -100,4 +97,9 @@ DNA DNA::crossover(DNA partner)
 sf::Vector2f DNA::getGene(int indexPos)
 {
     return genes[indexPos];
+}
+
+const int DNA::getDNALength()
+{
+    return DNA_LENGTH;
 }

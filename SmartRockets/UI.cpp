@@ -125,7 +125,7 @@ void UI::update(float dt, int gen, int lifeCycles, int matingPoolSz)
 	}
 
 	generationText.setString("Generation #: " + std::to_string(generation));
-	lifeCyclesText.setString("Life Cycles Remaining #: " + std::to_string(499 - lifeCyclesRemaining));
+	lifeCyclesText.setString("Life Cycles Remaining #: " + std::to_string(659 - lifeCyclesRemaining));
 	totalTimeTakenText.setString("Total Time Taken: " + std::to_string(hours) + "hrs " + std::to_string(mins) + "mins " + std::to_string(secs) + "secs");
 	matingPoolSizeText.setString("Mating Pool Size #: " + std::to_string(matingPoolSize));
 }
