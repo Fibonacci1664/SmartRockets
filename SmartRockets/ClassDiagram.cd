@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Application" Collapsed="true">
+    <Position X="4" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAABgAAAACAgAABAAAAQACAAAIEAAEAABEAIA=</HashCode>
+      <FileName>Application.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DNA" Collapsed="true">
+    <Position X="5.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAIAAAAAAAAAAAAAAAAAAABABMIAAAAAgAYAAABAAA=</HashCode>
+      <FileName>DNA.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeneticAlgorithm" Collapsed="true">
+    <Position X="7.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AiAAAAAAAAgAQAgAAAAAAAAAAAAAAQAIAAJBAAAWAIA=</HashCode>
+      <FileName>GeneticAlgorithm.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Obstacle" Collapsed="true">
+    <Position X="4" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAAAEAAAAAAAAAAAAAAAAAAAAAAIAAAALAIUAAA=</HashCode>
+      <FileName>Obstacle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rocket" Collapsed="true">
+    <Position X="5.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>0EQABQARBBAIAgwBgAIAgIAhDIAAERQIEAQAoAIUAAU=</HashCode>
+      <FileName>Rocket.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RocketPopulation" Collapsed="true">
+    <Position X="7.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAQEAikIAAAQAAgABCAAAAAAAAABQAIAQBBEAIUQAQ=</HashCode>
+      <FileName>RocketPopulation.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Target" Collapsed="true">
+    <Position X="4" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABBAACAqAAABAAAiABAAAAAAAMAAAAAAAUAAA=</HashCode>
+      <FileName>Target.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UI" Collapsed="true">
+    <Position X="5.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAIEAAAAgACACAoIAAAAAIAIAwAAAAAMAAAAGIAUEAA=</HashCode>
+      <FileName>UI.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World" Collapsed="true">
+    <Position X="7.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAEAEFBAAEAAAIAAAAAAAAYACAQAIAABAEMIUAAA=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,8 +1,27 @@
+/*
+ * This is the World class and handles all things contained within the World, namely: -
+ *		- Creating a Target object
+ *		- Creating a GA algorithm object
+ *		- Creating an obstacle object
+ *		- Creating a UI object
+ *
+ * This class also handle calling the GA functions such as update, render, selection, and reproduction
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2022.
+ */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// INCLUDES
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "GeneticAlgorithm.h"
 #include "Target.h"
 #include "UI.h"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 class World
 {
@@ -27,13 +46,15 @@ private:
 	void endDraw();
 
 	sf::RenderWindow* window;
+	sf::Texture bgTexture;
+	sf::Sprite bgSprite;
+
 	Target* target;
 	GeneticAlgorithm* GA;
 	Obstacle* obstacle;
 	UI* ui;
 
-	sf::Texture bgTexture;
-	sf::Sprite bgSprite;
-
 	int generation;
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////

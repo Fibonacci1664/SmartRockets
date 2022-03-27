@@ -1,5 +1,22 @@
+/*
+ * THIS WAS CREATED USING VISUAL STUDIO COMMUNITY EDITION - VERSION 16.11.6
+ * AND SFML - VERSION 2.5.1-windows-vc14-64-bit
+ */
+
+ /*
+  * This is the main point of entry for the program and handles
+  *		- Setting the applications window size.
+  *     - Creating and running the Application
+  *
+  */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// INCLUDES
 #include<SFML/Graphics.hpp>
 #include "Application.h"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GLOBALS
 const int WINDOW_WIDTH = 1280;
@@ -9,6 +26,8 @@ const int WINDOW_HEIGHT = 720;
 // debug boxes do not rotate with the sprites, this includes the rectangle
 // used to visualise the debug box
 bool displayDebug = true;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
@@ -24,3 +43,5 @@ int main()
 	
 	return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////

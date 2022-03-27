@@ -1,6 +1,27 @@
+/*
+ * This is the Rocket Population class and handles: -
+ *		- A vector container of Rocket object pointers - the population
+ *		- A vector container of Rocket objects - the mating pool
+ *		- A single Rocket pointer for the child Rocket object created during reproduction
+ *		- 3 DNA objects, 1 for each parent, and 1 for the child
+ * 
+ * The class also handles calling the fitness function, selection, and reproduction
+ * It also populates the mating pool and keeps track of the "best" rocket
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2022.
+ */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// INCLUDES
 #include "RocketPopulation.h"
 #include <iostream>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 RocketPopulation::RocketPopulation(sf::RenderWindow* hwnd) : window(hwnd)
 {
     child = nullptr;
@@ -24,6 +45,9 @@ RocketPopulation::~RocketPopulation()
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void RocketPopulation::update(float dt, Obstacle* obstacle)
 {
     // Update each rockets position according the velocity genes returned from each rockets DNA
@@ -32,6 +56,8 @@ void RocketPopulation::update(float dt, Obstacle* obstacle)
         rockets[i]->update(dt, obstacle);
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RocketPopulation::render()
 {
@@ -43,6 +69,8 @@ void RocketPopulation::render()
     // Render the best rocket on top of all other rockets
     rockets[bestIndex]->render();
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 Rocket* RocketPopulation::determineBestRocket()
 {
@@ -61,10 +89,14 @@ Rocket* RocketPopulation::determineBestRocket()
     return rockets[bestIndex];
 }
 
-void RocketPopulation::clearMatingPool()
-{
-    matingPool.clear();
-}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+//void RocketPopulation::clearMatingPool()
+//{
+//    matingPool.clear();
+//}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RocketPopulation::initPopulation()
 {
@@ -74,6 +106,8 @@ void RocketPopulation::initPopulation()
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void RocketPopulation::fitness(Target* target)
 {
     for (int i = 0; i < rockets.size(); ++i)
@@ -81,6 +115,8 @@ void RocketPopulation::fitness(Target* target)
         rockets[i]->assessFitness(target);
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool RocketPopulation::selection(Target* target)
 {
@@ -93,6 +129,8 @@ bool RocketPopulation::selection(Target* target)
     // The next step of selection is to build a mating pool
     return populateMatingPool();
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 //                                           a1                     a2                     b1                   b2                   s
 double RocketPopulation::mapRange(double minFitnessVal, double totalFitnessVal, double newRangeMin, double newRangeMax, double currFitnessVal)
@@ -118,6 +156,8 @@ double RocketPopulation::mapRange(double minFitnessVal, double totalFitnessVal, 
     return t;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 double RocketPopulation::getTotalFitness()
 {
     double totalFitnessScore = 0.0f;
@@ -131,10 +171,14 @@ double RocketPopulation::getTotalFitness()
     return totalFitnessScore;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 int RocketPopulation::getMatingPoolSize()
 {
     return matingPool.size();
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool RocketPopulation::populateMatingPool()
 {
@@ -169,13 +213,15 @@ bool RocketPopulation::populateMatingPool()
     // If the mating pool is empty it means all the rockets hit the obstacle and so the target is not found, FAIL!
     if (matingPool.empty())
     {
-        std::cout << "Mating Pool is Empty, why??\n";
+        std::cout << "Mating Pool is Empty, ";
 
         return true;
     }
 
     return false;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RocketPopulation::reproduction()
 {
@@ -213,7 +259,11 @@ void RocketPopulation::reproduction()
     ++generation;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 int RocketPopulation::getGeneration()
 {
     return generation;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////

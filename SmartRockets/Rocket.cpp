@@ -1,9 +1,30 @@
+/*
+ * This is the Rocket class and handles: -
+ *		- Loading in textures
+ *		- Setting up debug and collision boxes
+ *		- Updating the rockets position through applying force
+ *		- Assessing fitness
+ *		- Ensuring velocity doesn't exceed a predefined maximum
+ *		- Carrying out collision checks with the target and with the obstacle
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2022.
+ */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// INCLUDES
 #include "Rocket.h"
 #include <cmath>
 #include <iostream>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GLOBALS
 constexpr auto PI = 3.14159265359;
 
+// CONSTRUCTOR / DESTRUCTOR
 Rocket::Rocket(sf::RenderWindow* hwnd) : window(hwnd)
 {
     distanceToTarget = 0.0f;
@@ -35,6 +56,9 @@ Rocket::~Rocket()
     
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void Rocket::update(float dt, Obstacle* obstacle)
 {
     if (!hitObstacle)
@@ -68,6 +92,8 @@ void Rocket::update(float dt, Obstacle* obstacle)
     accel *= 0.0f;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::render()
 {
     window->draw(rocketSprite);
@@ -77,6 +103,8 @@ void Rocket::render()
         window->draw(rocketColBoxVisualized);
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Rocket::assessFitness(Target* target)
 {
@@ -101,20 +129,28 @@ void Rocket::assessFitness(Target* target)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 float Rocket::getDistanceToTarget()
 {
     return distanceToTarget;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 float Rocket::getFitnessScore()
 {
     return fitnessScore;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 DNA Rocket::getDNASequence()
 {
     return dna;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Something is not quite right with this check, it might be related to the collision box however
 // rather than this function
@@ -157,21 +193,29 @@ bool Rocket::checkItersection(Target* target)
     return false;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::setRocketColliderColour()
 {
     rocketColBoxVisualized.setOutlineColor(sf::Color::White);
     rocketSprite.setColor(sf::Color::Green);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 sf::Sprite Rocket::getRocketSprite()
 {
     return rocketSprite;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::setDNASequence(DNA newDNA)
 {
     dna = newDNA;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 sf::Vector2f Rocket::calculateUnitVector(sf::Vector2f vec)
 {
@@ -192,12 +236,16 @@ sf::Vector2f Rocket::calculateUnitVector(sf::Vector2f vec)
     return unitVec;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 float Rocket::calculateMagnitude(sf::Vector2f vec)
 {
     float mag = std::sqrt(vec.x * vec.x + vec.y * vec.y);
 
     return mag;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 sf::Vector2f Rocket::limiter()
 {
@@ -224,6 +272,8 @@ sf::Vector2f Rocket::limiter()
     return newVel;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::addForce(sf::Vector2f newAccel, float dt)
 {
     // Normalise
@@ -246,6 +296,8 @@ void Rocket::addForce(sf::Vector2f newAccel, float dt)
     rocketSprite.setRotation(currentRotation);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 float Rocket::calculateRotation(sf::Vector2f vel)
 {
     sf::Vector2f dir = -vel;
@@ -256,10 +308,14 @@ float Rocket::calculateRotation(sf::Vector2f vel)
     return thetaDeg;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::initDebug()
 {
     initRocketDebug();
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Rocket::initRocketDebug()
 {
@@ -270,6 +326,8 @@ void Rocket::initRocketDebug()
     rocketColBoxVisualized.setSize(sf::Vector2f(2.5f, 2.5f));  
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Rocket::checkObstacleCollisions(Obstacle* obstacle)
 {
     if (rocketCollisionBox.intersects(obstacle->getCollisonBox()))
@@ -279,6 +337,8 @@ bool Rocket::checkObstacleCollisions(Obstacle* obstacle)
 
     return false;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Rocket::initRocket()
 {
@@ -298,6 +358,8 @@ void Rocket::initRocket()
     rocketCollisionBox = sf::FloatRect(rocketSprite.getPosition().x - 2.0f, rocketSprite.getPosition().y - 37.8f, 2.5f, 2.5f);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Rocket::loadTexture()
 {
     if (!rocketTexture.loadFromFile("res/sprites/rocket_2.png"))
@@ -305,3 +367,5 @@ void Rocket::loadTexture()
         std::cout << "Error loading rocket texture\n";
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////

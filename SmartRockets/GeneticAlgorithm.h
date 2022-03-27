@@ -1,7 +1,22 @@
+/*
+ * This is the GA class and handles: -
+ *		- Creating a rocket population object
+ *		- Keeping a copy of the closest rocket
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2022.
+ */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// INCLUDES
 #pragma once
 #include "RocketPopulation.h"
 #include "Target.h"
 #include "Obstacle.h"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 class GeneticAlgorithm
 {
@@ -23,7 +38,9 @@ public:
 
 private:
     sf::RenderWindow* window;
+
     RocketPopulation* population;
     Rocket* closestRocket;
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////

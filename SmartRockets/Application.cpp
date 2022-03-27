@@ -9,31 +9,39 @@
  * © D. Green. 2022.
  */
 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
- // INCLUDES
+// INCLUDES
 #include "Application.h"
 #include <iostream>
 #include <chrono>
 #include <fstream>
 
-int POPULATION_SIZE = 10;
-int MUTATION_RATE = 1;
-bool TESTING = true;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GLOBALS
+// 25 <= POPULATION_SIZE <= 300
+// After 300, things get very slow. Optimal population size (PS) - 175 <= PS <= 200
+int POPULATION_SIZE = 200;
+int MUTATION_RATE = 1;  // %
+bool TESTING = false;
 
 // Output to CSV file for creating graphs of data
-std::ofstream SR_data("SmartRockets_Pop_10.csv");
+std::ofstream SR_data("SmartRockets_Pop_200.csv");
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CONSTRUCTOR / DESTRUCTOR
 Application::Application(int width, int height) : windowWidth(width), windowHeight(height)
 {
-    lifetime = 660;     // If you change this REMEMBER to update the DNA class for gene size to the same value and the UI for updating the gens remaining, really need to improve this!
+    // If you change this REMEMBER to update the DNA class for gene size to the same value
+    // AND the UI for updating the gens remaining, really need to improve this!
+    lifetime = 660;
     lifeCounter = 0;
     totalTime = 0.0f;
 
     initWindow();
+
 }
 
 Application::~Application()
@@ -45,7 +53,7 @@ Application::~Application()
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // FUNCTIONS
 void Application::initWindow()
@@ -64,7 +72,7 @@ void Application::initWindow()
     window.setPosition(sf::Vector2i((nativeScreenWidth * 0.5f) - (windowWidth * 0.5f), (nativeScreenHeight * 0.5f) - (windowHeight * 0.5f)));
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Application::update()
 {
@@ -84,6 +92,7 @@ void Application::update()
 
                 int genToSolve = theWorld->getGenerationToSolve();
 
+                // Output to CSV
                 SR_data << '\n';
                 SR_data << (testNum + 1) << "," << POPULATION_SIZE << "," << MUTATION_RATE << "," << genToSolve << "," << totalTime;
 
@@ -108,6 +117,8 @@ void Application::update()
         break;
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Application::runLoop()
 {
@@ -146,6 +157,7 @@ void Application::runLoop()
 
             if (allRocketsDead)
             {
+                std::cout << "All rockets died, ";
                 targetNotFound = true;
                 break;
             }
@@ -156,20 +168,24 @@ void Application::runLoop()
         }
     }
 
-    if (targetNotFound)
+    // For use if a max generations system is built
+    /*if (targetNotFound)
     {
-        std::cout << "Target Not Found!\n";
-    }
+        std::cout << "Target not found!\n";
+        return;
+    }*/
 
     std::cout << "Target Found!\n";
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Application::setUpCSV()
 {
     SR_data << "World #" << "," << "Total Population" << "," << "Mutation Rate %" << "," << "# Gen To Solve" << "," << "Time Taken (s)";
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Application::processWindowEvents()
 {
@@ -208,4 +224,4 @@ void Application::processWindowEvents()
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////

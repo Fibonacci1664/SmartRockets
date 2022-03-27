@@ -161,11 +161,18 @@
     <ClInclude Include="DNA.h" />
     <ClInclude Include="GeneticAlgorithm.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Rocket.h" />
     <ClInclude Include="RocketPopulation.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SmartRockets.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
